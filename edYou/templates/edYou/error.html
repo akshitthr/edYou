@@ -1,0 +1,17 @@
+{% extends "edYou/layout.html" %}
+
+{% block title %}Error {{ code }}{% endblock %}
+
+{% block courses %}active{% endblock %}
+
+{% block search %}
+    <form class="d-flex m-2 w-25 mx-auto" action="{% url 'search' %}">
+        <input class="form-control mx-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block main %}
+    <h2><b>Error {{ code }}</b></h2>
+    <h5>{{ message }}</h5>
+{% endblock %}

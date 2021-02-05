@@ -1,0 +1,96 @@
+{% extends "edYou/layout.html" %}
+
+{% load static %}
+
+{% block title %}Chapters - {{ course.name }}{% endblock %}
+
+{% block search %}
+    <form class="d-flex m-2 w-25 mx-auto" action="{% url 'search' %}">
+        <input class="form-control mx-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block main %}
+
+    <div id="chapters-editor" class="accordian mx-auto w-50">
+
+        <div class="card mx-auto">
+            <div class="card-header">
+                <h2 class="mb-0">
+                    <button class="btn btn-light btn-block text-center" type="button" data-toggle="collapse" data-target="#new-chapter-form">
+                        <b>New Chapter</b>
+                    </button>
+                </h2>
+            </div>
+
+            <div id="new-chapter-form" class="collapse form-group py-3">
+                <form action="{{ request.path }}" method="post">
+                    {% csrf_token %}
+                    <input name="new-cname" class="form-control ml-3 mb-3 float-left w-75" id="chapter-name-input" type="text" placeholder="Chapter Name" required>
+                    <button class="btn btn-primary mx-3 float-lg-right" type="submit">Create</button>
+                </form>
+            </div>
+
+            {% for chapter in chapters %}
+                <div onclick="$('#ctr-editForm-{{ chapter.id }}').collapse('hide');" class="card-header btn btn-light btn-block text-center px-3 py-4" data-toggle="collapse" data-target="#chapter-{{ chapter.id }}">
+                    {{ forloop.counter }}. {{ chapter.name }}
+                    <button onclick="deleteChapter('{{ chapter.id }}')" id="ctr-delBtn-{{ chapter.id }}" class="svg-edit-btn px-2 py-0"><img class="svg-edit-icon" src="{% static 'edYou/images/delete.svg' %}" alt="Delete Icon"></button>
+                    <button onclick="editChapter('{{ chapter.id }}')" class="svg-edit-btn px-2 py-0"><img class="svg-edit-icon" src="{% static 'edYou/images/draw.svg' %}" alt="Edit Icon"></button>    
+                    <form id="ctr-delForm-{{ chapter.id }}" class="d-none" action="{{ request.path }}" method="POST">
+                        {% csrf_token %}
+                        <input name="del-cid" value="{{ chapter.id }}" hidden>
+                    </form>
+                </div>
+
+                <div id="chapter-{{ chapter.id }}" class="collapse">
+                    <div class="px-4 text-left">
+                        <button onclick="newVideo('c{{ chapter.id }}-v{{video.id}}')" class="btn btn-link">New Video</button>
+                        <form class="overflow-hidden" id="form-new-c{{ chapter.id }}-v{{video.id}}" style="display: none;" action="{{ request.path }}" method="post">
+                            {% csrf_token %}
+                            <input name="new-cid" value="{{ chapter.id }}" hidden>
+                            <input name="new-vname" class="form-control my-2 w-50" type="text" placeholder="Video Name" required>
+                            <input name="new-vurl" class="form-control float-left my-2 w-75" type="text" placeholder="Video URL" required>
+                            <button class="btn btn-primary float-lg-right m-2" type="submit">Create</button>
+                        </form>
+                    </div>
+
+                    {% for video in chapter.videos %}
+                        <div class="px-4 text-left">
+                            <button id="btn-c{{ chapter.id }}-v{{video.id}}" class="btn btn-link">
+                                {{ forloop.counter }}. {{ video.name }}
+                            </button>
+                            <form id="vid-delForm-{{ chapter.id }}" class="d-none" action="{{ request.path }}" method="POST">
+                                {% csrf_token %}
+                                <input name="del-vid" value="{{ video.id }}" hidden>
+                            </form>
+                            <button onclick="document.getElementById('vid-delForm-{{ chapter.id }}').submit()" class="svg-edit-btn px-2"><img class="svg-edit-icon" src="{% static 'edYou/images/delete.svg' %}" alt="Delete Icon"></button>
+                            <button onclick="editVideo('c{{ chapter.id }}-v{{ video.id }}')" id="edit-c{{ chapter.id }}-v{{video.id}}" class="svg-edit-btn px-2"><img class="svg-edit-icon" src="{% static 'edYou/images/draw.svg' %}" alt="Edit Icon"></button>
+                            <form id="form-c{{ chapter.id }}-v{{video.id}}" class="overflow-hidden my-2" style="display: none;" action="{{ request.path }}" method="post">
+                                {% csrf_token %}
+                                <input name="edit-vid" value="{{ video.id }}" hidden>
+                                <input name="edit-vname" id="vname-c{{ chapter.id }}-v{{video.id}}" class="form-control my-2 w-50" type="text" placeholder="Video Name" value="{{ video.name }}" required>
+                                <input name="edit-vurl" id="vurl-c{{ chapter.id }}-v{{video.id}}" class="form-control float-left my-2 w-75" type="text" placeholder="Video URL" value="{{ video.video }}" required>
+                                <button class="btn btn-primary float-lg-right m-2" type="submit">Save</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div id="ctr-editForm-{{ chapter.id }}" class="collapse">
+                    <form class="form-group py-3" action="{{ request.path }}" method="post">
+                        {% csrf_token %}
+                        <input name="edit-cid" value="{{ chapter.id }}" hidden>
+                        <input name="edit-cname" class="form-control ml-3 mb-3 float-left w-75" type="text" placeholder="Chapter Name" value="{{ chapter.name }}" required>
+                        <button class="btn btn-primary mx-3 float-lg-right" type="submit">Save</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'edYou/chapters.js' %}"></script>
+{% endblock %}

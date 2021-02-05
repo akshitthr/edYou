@@ -1,0 +1,144 @@
+main input {
+    display: inline-block;
+}
+
+.allcourses-img {
+    max-width: 300px;
+}
+
+#course-overview, #course-desc {
+    overflow: hidden;
+}
+
+#course-desc {
+    float: inline-start;
+}
+
+#chapters {
+    min-width: 40%;
+}
+
+#course-img {
+    max-width: 500px;
+}
+
+#signin-form {
+    width: 35%;
+    min-width: 350px;
+}
+
+#signup-form {
+    width: 55%;
+    min-width: 350px;
+}
+
+.hide-flow {
+    overflow: hidden;
+}
+
+.btn-group-flex {
+    display: flex !important;
+}
+
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+
+#course-notes textarea {
+    height: 400px;
+}
+
+.d-flex {
+    width: 25%;
+    min-width: 250px;
+}
+
+#course-name {
+    max-width: 80%;
+}
+
+main .form-control {
+    width: auto;
+}
+
+#course-img-div {
+    overflow: auto;
+}
+
+#notes-textarea {
+    width: 100%;
+}
+
+#js-video {
+    min-width: 350px;
+}
+
+#course-ne-chapters {
+    min-width: 350px;
+}
+
+.svg-edit-icon {
+    width: 15px;
+}
+
+.svg-edit-btn {
+    float: right;
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 5px;
+	font: inherit;
+	cursor: pointer;
+    outline: inherit;
+}
+
+.svg-edit-btn:hover {
+    border-radius: 3px;
+    background-color: grey;
+}
+
+#chapters-editor {
+    min-width: 350px;
+}
+
+button {
+    outline: none !important;
+}
+
+#chapters-editor input {
+    margin-left: 5px;
+    min-width: 225px;
+}
+
+.filter-options {
+    border: none;
+    padding: 5px 20px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px;
+    cursor: pointer;
+    border-radius: 16px;
+    background-color: lightgray;
+}
+
+.filter-options:hover {
+    background-color: rgb(180, 180, 180);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    padding-bottom: 0%;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+.navbar-brand img {
+    height: 30px;
+}
+
+.logo {
+    height: 50px;
+}

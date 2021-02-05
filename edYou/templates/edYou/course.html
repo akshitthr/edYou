@@ -1,0 +1,94 @@
+{% extends "edYou/layout.html" %}
+
+{% load static %}
+
+{% block title %}Course - {{ course.name }}{% endblock %}
+
+{% block search %}
+    <form class="d-flex m-2 w-25 mx-auto" action="{% url 'search' %}">
+        <input class="form-control mx-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block main %}
+
+    <div id="course-view">
+        <div id="course">
+            <div id="course-overview">
+                <div class="float-lg-left" id="course-title">
+                    <div id="course-img-div" class="my-2"><img id="course-img" src="{{ course.img.url }}" alt="Course Preview Image"></div>
+                    <h5 id="course-name"><b>{{ course.name }}</b></h5>
+                    <p>by {{ course.teacher }}</p>
+                </div>
+                {% if course.teacher == request.user %}
+                    <form action="{{ request.path }}" method="POST">
+                        {% csrf_token %}
+                        <button id="delete-btn" name="delete" value="delete" type="submit" class="btn btn-primary float-lg-right m-lg-2 mb-4">Delete</button>
+                    </form>
+                    <button id="course-btn" type="button" class="btn btn-primary float-lg-right m-lg-2 mb-4">Edit</button>
+                {% else %}
+                    <form action="{{ request.path }}" method="post">
+                        {% csrf_token %}
+                        <button name="enroll" value="enroll" id="course-btn" class="btn btn-primary float-lg-right m-lg-2 mb-4">Enroll</button>            
+                    </form>
+                {% endif %}
+                <div class="float-lg-left m-lg-5" id="course-details">
+                    <p id="course-sub">Subject: {{ course.subject }}</p>
+                    <p id="course-lang">Course Language: {{ course.language }}</p>
+                    <p id="course-dif">Difficulty: {{ course.difficulty }}</p>
+                    <p id="course-dur">Duration: {{ course.duration }}</p>
+                </div>
+                <p class="w-100" id="course-desc">Description: {{ course.description }}</p>
+            </div><br>
+
+            {% if chapters and course.teacher != request.user %}
+                <h5>Chapters:</h5><br>
+                <div id="course-ne-chapters" class="accordian mx-auto w-50">
+                    <div class="card mx-auto">
+                        {% for chapter in chapters %}
+                            <div class="card-header text-center p-3">
+                                <h6>{{ forloop.counter }}. {{ chapter.name }}</h6>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% elif course.teacher == request.user %}
+                <h5>Chapters:</h5><br>
+                <div id="course-ne-chapters" class="accordian mx-auto w-50">
+                    <div class="card mx-auto">
+                        <div class="card-header text-center">
+                            <h2 class="mb-0">
+                                <a href="/course/view/{{ course.id }}/chapters" class="btn btn-light btn-block">Edit Chapters</a>
+                            </h2>
+                        </div>
+                        {% for chapter in chapters %}
+                            <div class="card-header text-center p-3">
+                                <h6>{{ forloop.counter }}. {{ chapter.name }}</h6>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if course.teacher == request.user %}
+            <div id="edit-form">
+            {% if form.is_multipart %}
+                <form enctype="multipart/form-data" method="post" action="{{ request.path }}">
+            {% else %}
+                <form method="post" action="{{ request.path }}">
+                {% endif %}
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <a class="btn btn-danger" href="{{ request.path }}">Cancel</a>
+                    <button class="btn btn-primary" type="submit" id="save">Save Changes</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'edYou/course.js' %}"></script>
+{% endblock %}

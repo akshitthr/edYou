@@ -1,0 +1,65 @@
+{% extends "edYou/layout.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block index %}active{% endblock %}
+
+{% block search %}
+    <form class="d-flex m-2 w-25 mx-auto" action="{% url 'search' %}">
+        <input class="form-control mx-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block main %}
+    <div id="carousel" class="carousel slide mb-5" data-ride="carousel">
+        <ul class="carousel-indicators">
+            <li data-target="#carousel" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel" data-slide-to="1"></li>
+            <li data-target="#carousel" data-slide-to="2"></li>
+        </ul>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'edYou/images/car-1.jpeg' %}" alt="Carousel Image" width="1100" height="500"> 
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'edYou/images/car-2.jpeg' %}" alt="Carousel Image" width="1100" height="500">
+                <div class="carousel-caption">
+                    <h4>Learn at your own pace</h4>
+                </div>   
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'edYou/images/car-3.jpeg' %}" alt="Carousel Image" width="1100" height="500">
+                <div class="carousel-caption">
+                    <h4>Quality Education at your fingertips</h4>
+                </div>   
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carousel" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#carousel" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+    </div>
+
+    <div class="courses my-5 py-5">
+        <h4 class="mb-3">Few of the latest courses:</h4>
+        <div class="container">
+            <div class="row">
+                {% for course in courses %}
+                    <div class="col-xl-4 my-2">
+                        <img class="my-2 allcourses-img" src="{{ course.img.url }}" alt="Course Preview Image">
+                        <br>
+                        <a href="{% url 'course' course.id %}">{{ course.name }}</a>
+                        <p>by {{ course.teacher }}</p>
+                        <h6>Subject: {{ course.subject }}</h6>
+                        <h6>Difficulty: {{ course.difficulty }}</h6>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

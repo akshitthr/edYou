@@ -1,0 +1,56 @@
+{% extends "edYou/layout.html" %}
+
+{% load edYou_extras %}
+
+{% load static %}
+
+{% block title %}Courses{% endblock %}
+
+{% block courses %}active{% endblock %}
+
+{% block search %}
+    <form class="d-flex m-2 w-25 mx-auto" action="{% url 'search' %}">
+        <input class="form-control mx-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block main %}
+
+    {% dynamic_regroup unordered_courses by param as courses %}
+    
+    <div id="filter-btns" class="btn-group" role="group">
+        <button onclick="displayAll();" class="btn btn-light filter-options active" id="btn-all">All</button>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            {% for element in courses %}
+                {% for course in element.list %}
+                    <div class="filter-data filter-{{ element.grouper }} col-xl-4 my-2">
+                        <img class="my-2 allcourses-img" src="{{ course.img.url }}" alt="Course Preview Image">
+                        <br>
+                        <a href="{% url 'course' course.id %}">{{ course.name }}</a>
+                        <p>by {{ course.teacher }}</p>
+                        <h6>Subject: {{ course.subject }}</h6>
+                        <h6>Difficulty: {{ course.difficulty }}</h6>
+                    </div>
+                    {% ifchanged element.grouper %}
+                        <script>
+                            var btn = document.createElement('button');
+                            btn.className = 'btn btn-light filter-options';
+                            btn.id = 'btn-{{ element.grouper }}'
+                            btn.innerHTML = '{{ element.grouper }}';
+                            btn.onclick = () => displayData('{{ element.grouper }}');
+                            document.getElementById('filter-btns').append(btn);
+                        </script>
+                    {% endifchanged %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'edYou/filter.js' %}"></script>
+{% endblock %}
