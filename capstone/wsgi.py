@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'capstone.settings')
+# Use production settings if WEBSITE_HOSTNAME defined
+settings_module = 'capstone.production' if 'WEBSITE_HOSTNAME' in os.environ else 'capstone.settings'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 application = get_wsgi_application()

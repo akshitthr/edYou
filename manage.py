@@ -6,7 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'capstone.settings')
+    # Use production settings if WEBSITE_HOSTNAME defined
+    settings_module = 'capstone.production' if 'WEBSITE_HOSTNAME' in os.environ else 'capstone.settings'
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

@@ -8,10 +8,12 @@
 
 {% block main %}
 
-    {% if message %}
-        <div class="alert alert-danger" role="alert">
-            {{ message }}
-        </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger text-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endif %}
 
     <form action="{% url 'signup' %}" method="post">

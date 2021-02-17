@@ -3,3 +3,4 @@ gunicorn
 psycopg2
 django-heroku
 pillow
+django-upload-validator

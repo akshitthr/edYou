@@ -36,7 +36,7 @@ def signin(request):
             return HttpResponseRedirect(reverse("index"))
         
         else:
-            messages.add_message(request, messages.WARNING, 'Invalid username and/or password')
+            messages.add_message(request, messages.ERROR, 'Invalid username and/or password')
             return HttpResponseRedirect(reverse("signin"))
 
     else:
@@ -60,39 +60,51 @@ def signup(request):
     # Check request method
     if request.method == "POST":
         
+        # Collect data from form
         username = request.POST.get("username")
         password = request.POST.get("password")
         confirm = request.POST.get("confirm")
         email  = request.POST.get("email")
         fname = request.POST.get("fname")
         lname = request.POST.get("lname")
+        data = [username, password, confirm, email, fname, lname]
+        valid_form = True
 
-        # Check if passwords match
-        if password != confirm:
-            return render(request, "edYou/signup.html", {
-                "message": "Passwords must match"
-            })
-        
+        # Ensure fields are not empty
+        for item in data:
+            if len(item) < 1:
+                valid_form = False
+
         # Password length must be at least 8
-        elif len(password) < 8:
-            return render(request, "edYou/signup.html", {
-                "message": "Password must be at least 8 characters long"
-            })
+        if len(password) < 8:
+            messages.add_message(request, messages.ERROR, "Password must be at least 8 characters long")
+            return HttpResponseRedirect(request.path)
         
-        # Attempt to create user
-        try:
-            user = User.objects.create_user(username, email, password, first_name=fname, last_name=lname)
-            user.save()
+        # Check if passwords match
+        elif password != confirm:
+            messages.add_message(request, messages.ERROR, "Passwords does not match")
+            return HttpResponseRedirect(request.path)
         
-        # Return message if username is unavailable
-        except IntegrityError:
-            return render(request, "edYou/signup.html", {
-                "message": "Username already taken"
-            })
+        # Check form validity
+        if valid_form:
+            # Attempt to create user
+            try:
+                user = User.objects.create_user(username, email, password, first_name=fname, last_name=lname)
+                user.save()
+            
+            # Return message if username is unavailable
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, "Username unavailable. Please type a different username.")
+                return HttpResponseRedirect(request.path)
+            
+            # Log user in
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
         
-        # Log user in
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        # Return error if form invalid
+        else:
+            messages.add_message(request, messages.ERROR, "Your form contains invalid values")
+            return HttpResponseRedirect(request.path)
 
     else:
         return render(request, "edYou/signup.html")
@@ -138,9 +150,7 @@ def course(request, id):
                     enroll = Enrolled(user=request.user, course=Course.objects.get(id=id))
                     enroll.save()
                 
-                return HttpResponseRedirect(reverse('course', kwargs={
-                    "id": id
-                }))
+                return HttpResponseRedirect(request.path)
             
             # Ask user to sign in if signed out
             else:
@@ -155,6 +165,13 @@ def course(request, id):
         # User requests to edit course
         else:
             form = CourseForm(request.POST, request.FILES)
+
+            # Restrcit Max File Size to 5 MB
+            if form.cleaned_data['img'].size < 5242880:
+                messages.add_message(request, messages.ERROR, "Max File Size is 5 MB")
+                return HttpResponseRedirect(request.path)
+            
+            # Edit course details if form valid
             if form.is_valid():
                 course = Course(
                     id=id,
@@ -170,6 +187,10 @@ def course(request, id):
                 course.save()
 
                 return HttpResponseRedirect(request.path)
+            
+            # Return error message if form invalid
+            messages.add_message(request, messages.ERROR, "Invalid form")
+            return HttpResponseRedirect(request.path)
     
     else:
 
@@ -237,8 +258,14 @@ def new_course(request):
     # Check request method
     if request.method == 'POST':
 
-        # Create course if form is valid
         form = CourseForm(request.POST, request.FILES)
+        
+        # Restrcit Max File Size to 5 MB
+        if form.cleaned_data['img'].size < 5242880:
+            messages.add_message(request, messages.ERROR, "Max File Size is 5 MB")
+            return HttpResponseRedirect(request.path)
+        
+        # Create course if form is valid
         if form.is_valid():
             course = Course(
                 teacher=request.user,
@@ -255,6 +282,10 @@ def new_course(request):
             return HttpResponseRedirect(reverse('course', kwargs={
                 "id": course.id
             }))
+        
+        # Return error if form invalid
+        messages.add_message(request, messages.ERROR, "Invalid Form")
+        return HttpResponseRedirect(request.path)
 
     else:
         return render(request, "edYou/new_course.html", {'form': CourseForm()})

@@ -5,6 +5,15 @@
 {% block new_course %}active{% endblock %}
 
 {% block main %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger text-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if form.is_multipart %}
         <form enctype="multipart/form-data" method="post" action="{% url 'new_course' %}">
     {% else %}

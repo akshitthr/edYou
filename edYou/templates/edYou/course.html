@@ -13,6 +13,14 @@
 
 {% block main %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger text-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <div id="course-view">
         <div id="course">
             <div id="course-overview">
