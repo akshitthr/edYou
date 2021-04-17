@@ -167,7 +167,7 @@ def course(request, id):
             form = CourseForm(request.POST, request.FILES)
 
             # Restrcit Max File Size to 5 MB
-            if form.cleaned_data['img'].size < 5242880:
+            if request.FILES['img'].size > 5242880:
                 messages.add_message(request, messages.ERROR, "Max File Size is 5 MB")
                 return HttpResponseRedirect(request.path)
             
@@ -261,7 +261,7 @@ def new_course(request):
         form = CourseForm(request.POST, request.FILES)
         
         # Restrcit Max File Size to 5 MB
-        if form.cleaned_data['img'].size < 5242880:
+        if request.FILES['img'].size > 5242880:
             messages.add_message(request, messages.ERROR, "Max File Size is 5 MB")
             return HttpResponseRedirect(request.path)
         
